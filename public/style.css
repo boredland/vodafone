@@ -309,6 +309,10 @@ footer {
 	margin: 2rem 0 1rem;
 }
 
+footer p {
+	margin: 0 0 0.5rem;
+}
+
 footer a {
 	color: inherit;
 }

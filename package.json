@@ -1,6 +1,7 @@
 {
   "name": "vodafone-stoerungen",
   "version": "1.0.0",
+  "license": "MIT",
   "scripts": {
     "dev": "wrangler dev",
     "deploy": "wrangler d1 migrations apply DB --remote && wrangler deploy",

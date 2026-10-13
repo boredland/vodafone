@@ -25,6 +25,10 @@ flowchart LR
 - **Web Push** (`src/webpush.ts`): VAPID JWT (ES256) and `aes128gcm` payload encryption, both on WebCrypto, with no dependencies. Only known browser push services are accepted as endpoints.
 - **Statistics** (`src/stats.ts`), each over 7/30/90/365 days: availability (time without an incident, overlaps merged), count, total and mean time to resolve, longest incident, and maintenance time. Also: minutes per day for the last 90 days, start times by hour and weekday (Europe/Berlin), and a breakdown by category. Windows are clamped to the period during which the address was actually observed.
 
+## Privacy
+
+No accounts, cookies or analytics. D1 stores the looked-up addresses (with no link to who looked them up) and their fault history. Subscribing adds the email address or the browser's push endpoint; unsubscribing deletes it, and unconfirmed email addresses are deleted after 7 days. The browser keeps the last address and its push tokens in `localStorage`. Rate limiting counts per client IP without persisting it. Cloudflare's Workers Logs (`observability` in `wrangler.jsonc`) keep request metadata for Cloudflare's retention period.
+
 ## Setup
 
 Requires the Workers Paid plan (Email Service sending) and `vodafone.jonas-strassel.de` onboarded to Email Service as a sending domain.
@@ -52,3 +56,7 @@ npm run typecheck
 ```
 
 After changing `wrangler.jsonc`, run `npm run cf-typegen`.
+
+## License
+
+[MIT](LICENSE)
