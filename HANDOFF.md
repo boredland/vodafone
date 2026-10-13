@@ -66,7 +66,7 @@ If the rate-limit `namespace_id`s `4711`/`4712` collide with other Workers on th
       ```
       Within 5 minutes you should get a "Kabel-Störung behoben" push/email. Delete the row afterwards (`DELETE FROM faults WHERE fault_id = 'TEST1'`). It also affects that address's statistics.
 - [ ] Subscribe a real email address; confirm the double-opt-in mail arrives and the link works; check the unsubscribe link and the mail client's one-click unsubscribe.
-- [ ] `npx wrangler tail` during a cron run: expect `monitor: checked N addresses, 0 failed`.
+- [ ] `npx wrangler tail` during a cron run: expect `monitor: checked N addresses, 0 failed`. **Open as of 2026-10-13 09:24 UTC:** the `*/5` trigger is registered (`GET …/workers/scripts/vodafone-stoerungen/schedules`) but has never fired since 07:55, even after `wrangler triggers deploy` and deleting and re-adding the schedule. A throwaway Worker with `* * * * *` deployed at 09:07 didn't fire within 17 minutes either, while older Workers on the account (`slopduel`, `translate`) keep running. So newly created crons on this account don't fire; the app code isn't the cause. Check `workersInvocationsScheduled` in GraphQL analytics or the dashboard's Triggers tab; if it's still silent, open a Cloudflare support ticket.
 
 ## Known risks / things to watch
 
