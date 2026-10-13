@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="de">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>Vodafone Störungsmelder</title>
+		<meta name="description" content="Vodafone-Störungen und Wartungen für eine Adresse prüfen, Statistiken ansehen und per Push oder E-Mail benachrichtigt werden." />
+		<link rel="manifest" href="/manifest.webmanifest" />
+		<link rel="icon" href="/icon.svg" type="image/svg+xml" />
+		<meta name="theme-color" content="#e60000" />
+		<link rel="stylesheet" href="/style.css" />
+		<script type="module" src="/app.js"></script>
+	</head>
+	<body>
+		<header>
+			<h1>Vodafone Störungsmelder</h1>
+			<p class="muted">Prüft die Störungsauskunft von vodafone.de für eine Adresse, sammelt den Verlauf und benachrichtigt Dich.</p>
+		</header>
+
+		<main>
+			<div id="flash" class="flash" hidden></div>
+
+			<section id="search" class="card">
+				<h2>Adresse</h2>
+				<form id="address-form" autocomplete="off">
+					<label>
+						PLZ oder Ort
+						<input id="place" list="place-list" required placeholder="z. B. 40549 oder Düsseldorf" />
+						<datalist id="place-list"></datalist>
+					</label>
+					<label>
+						Straße
+						<input id="street" list="street-list" required disabled />
+						<datalist id="street-list"></datalist>
+					</label>
+					<label>
+						Hausnummer
+						<input id="number" required disabled inputmode="numeric" />
+					</label>
+					<div id="address-choices" class="choices" hidden></div>
+				</form>
+			</section>
+
+			<section id="result" hidden>
+				<div class="card">
+					<div class="row">
+						<h2 id="address-label"></h2>
+						<button id="change-address" class="link">Andere Adresse</button>
+					</div>
+					<p id="status-meta" class="muted"></p>
+					<div id="status"></div>
+				</div>
+
+				<div class="card">
+					<h2>Benachrichtigungen</h2>
+					<p class="muted">Bei neuen und behobenen Störungen oder Wartungen an dieser Adresse.</p>
+					<div class="subscribe">
+						<div>
+							<h3>Push</h3>
+							<button id="push-toggle">Push aktivieren</button>
+							<p id="push-state" class="muted small"></p>
+						</div>
+						<form id="email-form">
+							<h3>E-Mail</h3>
+							<div class="inline">
+								<input id="email" type="email" required placeholder="du@example.com" />
+								<button type="submit">Abonnieren</button>
+							</div>
+							<p id="email-state" class="muted small"></p>
+						</form>
+					</div>
+				</div>
+
+				<div class="card">
+					<h2>Statistik</h2>
+					<p id="stats-meta" class="muted"></p>
+					<div id="stats-windows" class="windows"></div>
+					<h3>Störungsminuten pro Tag (90 Tage)</h3>
+					<div id="stats-daily" class="chart"></div>
+					<div class="legend small muted"><span class="sw incident"></span>Störung <span class="sw maintenance"></span>Wartung</div>
+					<div class="split">
+						<div>
+							<h3>Beginn nach Uhrzeit</h3>
+							<div id="stats-hour" class="bars"></div>
+						</div>
+						<div>
+							<h3>Beginn nach Wochentag</h3>
+							<div id="stats-weekday" class="bars"></div>
+						</div>
+					</div>
+					<h3>Nach Art</h3>
+					<table id="stats-category"></table>
+					<h3>Verlauf</h3>
+					<table id="history"></table>
+				</div>
+			</section>
+		</main>
+
+		<footer class="muted small">
+			Inoffizielles Projekt, nicht mit Vodafone verbunden. Daten aus der öffentlichen
+			<a href="https://www.vodafone.de/stoerung/validate">Störungsauskunft</a>; Statistiken umfassen nur den Zeitraum, in dem
+			die Adresse hier beobachtet wird (alle 5 Minuten).
+		</footer>
+	</body>
+</html>
