@@ -1,6 +1,6 @@
 # Handoff: continuing on another machine
 
-State as of 2026-10-13: the app is built and verified locally against the live Vodafone API (`npm test` 28/28, `npm run typecheck` clean, `wrangler dev` smoke run of lookup → status → stats → email subscribe/confirm → cron resolve → notification mail). **Nothing is deployed yet.** Architecture and behavior are described in [README.md](README.md).
+State as of 2026-10-13: the app is built and verified locally against the live Vodafone API (`npm test` 28/28, `npm run typecheck` clean, `wrangler dev` smoke run of lookup → status → stats → email subscribe/confirm → cron resolve → notification mail). **Deployed** to account `cd1e88db5a44de0f45317275cbcef879` (section 3 done), but **address lookups don't work in production**; see "Upstream rejects Cloudflare egress" below. Architecture and behavior are described in [README.md](README.md).
 
 ## 1. Get a working checkout
 
@@ -32,7 +32,9 @@ npm test && npm run typecheck
 
 Emails are simulated locally; their content lands in `.wrangler/tmp/email/`.
 
-## 3. First deployment (open)
+## 3. First deployment (done 2026-10-13)
+
+Done: Email Sending enabled for `vodafone.jonas-strassel.de` (`wrangler email sending enable`), D1 `vodafone-stoerungen` created (EEUR, id in `wrangler.jsonc`), production VAPID keys set as secrets, migrations applied, Worker deployed with custom domain and cron. Rate-limit IDs `4711`/`4712` don't collide (the only other user on the account, `rahlwes`, uses `1001`/`1002`). The steps below are kept for reference.
 
 Prerequisites in the Cloudflare dashboard:
 
@@ -68,6 +70,7 @@ If the rate-limit `namespace_id`s `4711`/`4712` collide with other Workers on th
 
 ## Known risks / things to watch
 
+- **Upstream rejects Cloudflare egress (blocks production).** From Workers, every `eu3.api.vodafone.com/netassistant/v1` call (`suggest` and `faultinfo`, with any key, body, UA, `Origin`/`Referer`) returns `400 {"message":"invalid_request","description":"The request parameter is invalid"}`; the same requests from a residential IP return 200. Vodafone's gateway evidently blocks Cloudflare egress IPs. Because `suggest()` maps 400 to "no suggestions", the live site shows empty autocomplete instead of an error, and the monitor would fail every address. Fixing it requires routing upstream calls through a non-Cloudflare egress (e.g. a small proxy on a VPS or another host), which is an architecture decision.
 - **Upstream is undocumented.** `eu3.api.vodafone.com/netassistant/v1` with the key embedded in the vodafone.de Störungsfinder bundle (`/simplicity/net-assistant/js/main.js`, constant `Yg`). If lookups start failing with 4xx, re-extract the key from that bundle and update `VODAFONE_API_KEY` in `wrangler.jsonc`. The request shapes (`suggest` with `searchKey` = `postCodeOrCity` | `streetName` | `streetNr`, `faultinfo` with `postalCode` or `addressId`) came from the lazy chunk `/simplicity/net-assistant/js/22.js`.
 - Using Vodafone's internal API may conflict with their terms of use.
 - Statistics only cover the period since an address was first looked up; Vodafone exposes only current faults, so there's no backfill.

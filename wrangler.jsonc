@@ -15,6 +15,7 @@
 		{
 			"binding": "DB",
 			"database_name": "vodafone-stoerungen",
+			"database_id": "677f17e9-b887-45ef-a0b6-e9260e67ca49",
 			"migrations_dir": "migrations"
 		}
 	],
